@@ -1,0 +1,58 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "netguardian"
+version = "0.1.0"
+description = "High-performance infrastructure proxy with traffic inspection, TLS termination, and IDS/IPS capabilities."
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "MIT"}
+authors = [
+    {name = "NetGuardian Team"},
+]
+keywords = ["proxy", "security", "ids", "ips", "tls", "network", "inspection"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: System Administrators",
+    "Topic :: Internet :: Proxy Servers",
+    "Topic :: Security",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Operating System :: OS Independent",
+]
+
+dependencies = [
+    "cryptography>=41.0.0",
+    "rich>=13.0.0",
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-asyncio>=0.21",
+    "httpx>=0.24",
+    "coverage>=7.0",
+]
+
+# Console entry point — allows running with: netguardian
+[project.scripts]
+netguardian = "netguardian.__main__:main"
+
+# Tell setuptools where to find the package
+[tool.setuptools.packages.find]
+where = ["src"]
+
+# Pytest configuration
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+# Coverage configuration
+[tool.coverage.run]
+source = ["src/netguardian"]
+omit = ["tests/*"]

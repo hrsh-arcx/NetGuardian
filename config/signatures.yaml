@@ -1,0 +1,153 @@
+
+#  NetGuardian IDS/IPS — Signature Database
+#  Each signature has:
+#    id        — Unique identifier (e.g., "NG-SQLI-001")
+#    name      — Human-readable name
+#    category  — Group: sqli, xss, traversal, cmdi, recon
+#    severity  — low, medium, high, critical
+#    action    — alert (log only) or block (reject request)
+#    target    — Where to look: uri, headers, body, any
+#    pattern   — Regex pattern to match against
+
+signatures:
+
+  # ── SQL Injection ──────────────────────────────────────────────
+  - id: "NG-SQLI-001"
+    name: "SQL Injection — OR-based bypass"
+    category: "sqli"
+    severity: "high"
+    action: "block"
+    target: "uri"
+    pattern: "(?i)(\\bor\\b\\s+\\d+\\s*=\\s*\\d+|\\bor\\b\\s+['\"]\\w+['\"]\\s*=\\s*['\"]\\w+['\"])"
+
+  - id: "NG-SQLI-002"
+    name: "SQL Injection — UNION SELECT"
+    category: "sqli"
+    severity: "high"
+    action: "block"
+    target: "any"
+    pattern: "(?i)(union\\s+(all\\s+)?select)"
+
+  - id: "NG-SQLI-003"
+    name: "SQL Injection — DROP/ALTER/TRUNCATE"
+    category: "sqli"
+    severity: "critical"
+    action: "block"
+    target: "any"
+    pattern: "(?i)(\\b(drop|alter|truncate)\\s+(table|database|column)\\b)"
+
+  - id: "NG-SQLI-004"
+    name: "SQL Injection — Comment injection"
+    category: "sqli"
+    severity: "medium"
+    action: "alert"
+    target: "uri"
+    pattern: "(/\\*.*?\\*/|--\\s|#\\s)"
+
+  - id: "NG-SQLI-005"
+    name: "SQL Injection — Stacked queries (semicolon)"
+    category: "sqli"
+    severity: "high"
+    action: "block"
+    target: "uri"
+    pattern: "(?i)(;\\s*(select|insert|update|delete|drop|alter|create)\\b)"
+
+  # ── Cross-Site Scripting (XSS) ─────────────────────────────────
+  - id: "NG-XSS-001"
+    name: "XSS — Script tag injection"
+    category: "xss"
+    severity: "high"
+    action: "block"
+    target: "any"
+    pattern: "(?i)(<\\s*script[^>]*>)"
+
+  - id: "NG-XSS-002"
+    name: "XSS — Event handler injection"
+    category: "xss"
+    severity: "high"
+    action: "block"
+    target: "any"
+    pattern: "(?i)(\\bon\\w+\\s*=\\s*['\"])"
+
+  - id: "NG-XSS-003"
+    name: "XSS — JavaScript URI scheme"
+    category: "xss"
+    severity: "medium"
+    action: "alert"
+    target: "uri"
+    pattern: "(?i)(javascript\\s*:)"
+
+  - id: "NG-XSS-004"
+    name: "XSS — Data URI with script"
+    category: "xss"
+    severity: "high"
+    action: "block"
+    target: "any"
+    pattern: "(?i)(data\\s*:[^;]*;base64)"
+
+  # ── Path Traversal ─────────────────────────────────────────────
+  - id: "NG-TRAV-001"
+    name: "Path Traversal — Dot-dot-slash"
+    category: "traversal"
+    severity: "high"
+    action: "block"
+    target: "uri"
+    pattern: "(\\.\\./|\\.\\.\\\\)"
+
+  - id: "NG-TRAV-002"
+    name: "Path Traversal — Encoded traversal"
+    category: "traversal"
+    severity: "high"
+    action: "block"
+    target: "uri"
+    pattern: "(%2e%2e%2f|%2e%2e/|\\.\\.%2f|%2e%2e%5c)"
+
+  - id: "NG-TRAV-003"
+    name: "Path Traversal — /etc/passwd access"
+    category: "traversal"
+    severity: "critical"
+    action: "block"
+    target: "uri"
+    pattern: "(?i)(/etc/(passwd|shadow|hosts))"
+
+  # ── Command Injection ──────────────────────────────────────────
+  - id: "NG-CMDI-001"
+    name: "Command Injection — Shell metacharacters"
+    category: "cmdi"
+    severity: "critical"
+    action: "block"
+    target: "any"
+    pattern: "([;|`]\\s*(cat|ls|whoami|id|uname|curl|wget|nc|bash|sh|cmd|powershell))"
+
+  - id: "NG-CMDI-002"
+    name: "Command Injection — Subshell execution"
+    category: "cmdi"
+    severity: "critical"
+    action: "block"
+    target: "any"
+    pattern: "(\\$\\(|`[^`]+`)"
+
+  # ── Reconnaissance / Scanning ──────────────────────────────────
+  - id: "NG-RECON-001"
+    name: "Recon — Suspicious User-Agent (scanner)"
+    category: "recon"
+    severity: "low"
+    action: "alert"
+    target: "headers"
+    pattern: "(?i)(nikto|sqlmap|nmap|dirbuster|gobuster|wfuzz|burpsuite|zaproxy)"
+
+  - id: "NG-RECON-002"
+    name: "Recon — Missing User-Agent header"
+    category: "recon"
+    severity: "low"
+    action: "alert"
+    target: "headers"
+    pattern: "__MISSING_USER_AGENT__"
+
+  - id: "NG-RECON-003"
+    name: "Recon — Admin/config path probe"
+    category: "recon"
+    severity: "medium"
+    action: "alert"
+    target: "uri"
+    pattern: "(?i)(/admin|/wp-admin|/phpmyadmin|/\\.env|\\.git/config|/server-status)"

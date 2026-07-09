@@ -1,0 +1,30 @@
+# Python bytecode / caches
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+
+# Project specific
+certs/
+logs/
+*.crt
+*.key
+*.pem
+
+# IDEs
+.idea/
+.vscode/
+.project
+.pydevproject
+
+# Testing / Coverage
+.cache/
+.pytest_cache/
+.coverage
+htmlcov/

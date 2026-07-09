@@ -1,0 +1,68 @@
+#  NetGuardian Proxy — Default Configuration
+
+# ── Proxy Server ─────────────────────────────────────────────────
+server:
+  host: "127.0.0.1"           # Listen address (localhost only — safe default)
+  port: 8080                  # Listen port
+  max_connections: 1024       # Maximum simultaneous connections
+  connection_timeout: 30      # Seconds before an idle connection is dropped
+  buffer_size: 65536          # Read buffer size in bytes (64 KB)
+
+# ── TLS / Certificate Authority ──────────────────────────────────
+tls:
+  enabled: true               # Enable TLS interception for HTTPS CONNECT
+  cert_dir: "certs"           # Directory for CA and generated domain certificates
+  ca_name: "NetGuardian Root CA"
+  key_size: 2048              # RSA key size for generated certificates
+  cert_validity_days: 365     # How long generated domain certs are valid
+
+# ── IP Filtering (Access Control) ────────────────────────────────
+ip_filter:
+  enabled: true
+  default_policy: "allow"     # "allow" or "deny" — what happens if no rule matches
+
+  # IPs/CIDRs that are always allowed through the proxy
+  allowlist:
+    - "127.0.0.1"
+    - "::1"
+
+  # IPs/CIDRs that are always blocked
+  blocklist: []
+  #  - "10.0.0.0/8"          # Example: block an entire private range
+
+# ── Rate Limiting ────────────────────────────────────────────────
+rate_limiter:
+  enabled: true
+  requests_per_second: 50     # Token refill rate per source IP
+  burst_size: 100             # Maximum burst tokens allowed
+  cleanup_interval: 60        # Seconds between stale bucket cleanup
+
+# ── Proxy Authentication ─────────────────────────────────────────
+auth:
+  enabled: false              # Set to true to require proxy credentials
+  users:                      # username: password pairs
+    admin: "changeme"
+
+# ── Inspection Engine (IDS/IPS) ──────────────────────────────────
+inspection:
+  enabled: true
+  mode: "ids"                 # "ids" = alert only, "ips" = alert + block
+  signatures_file: "config/signatures.yaml"  # Path to signature database
+  max_body_scan_bytes: 65536  # Don't scan bodies larger than this (performance)
+
+# ── Telemetry & Logging ──────────────────────────────────────────
+logging:
+  level: "INFO"               # TRACE, DEBUG, INFO, WARNING, ERROR, CRITICAL
+  console: true               # Rich-formatted console output
+  file: true                  # Also write logs to file
+  log_dir: "logs"             # Directory for log files
+  max_file_size_mb: 10        # Rotate log files after this size
+  json_format: true           # Structured JSON log entries in files
+
+# ── Metrics & Stats Export ───────────────────────────────────────
+metrics:
+  enabled: true
+  export_interval: 30         # Seconds between stats reports
+  console_table: true         # Print a Rich stats table to console
+  json_export: true           # Also write stats to a JSON file
+  json_export_path: "logs/metrics.json"
