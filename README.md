@@ -140,6 +140,17 @@ python scripts/benchmark.py --proxy-port 8080 --target-host 127.0.0.1 --target-p
 
 ---
 
-## License
+## 👨‍💻 Author
 
-MIT
+**Harsh Goel**
+
+GitHub: https://github.com/hrsh-arcx
+
+LinkedIn: https://linkedin.com/in/harsh-goel-090a00315
+
+Email: harsh18goel@gmail.com
+
+
+---
+
+⭐ If you found this project interesting, consider giving the repository a star.
