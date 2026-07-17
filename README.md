@@ -109,14 +109,33 @@ All settings are in [`config/default.yaml`](config/default.yaml). Key sections:
 # Install dev dependencies
 pip install -r requirements-dev.txt
 
-# Run unit tests
-pytest tests/unit/ -v
-
-# Run integration tests
-pytest tests/integration/ -v
+# Run all unit and integration tests
+pytest tests/ -v
 
 # Run with coverage
 coverage run -m pytest tests/ && coverage report
+```
+
+---
+
+## Benchmarks & Traffic Simulation
+
+NetGuardian comes with utility scripts for testing and benchmarking the proxy.
+
+### Traffic Generator
+Simulate concurrent users sending a mix of normal requests and common attack vectors:
+```bash
+# Run a simulated workload of 5 concurrent clients sending 10 requests each
+# Target the running proxy at localhost:8080 routing to a target backend
+python scripts/generate_traffic.py --proxy-port 8080 --target-host example.com --target-port 80 --concurrency 5 --requests 10
+```
+
+### Performance Benchmarks
+Compare latency distributions (average, p50, p95, p99) and requests/sec throughput of direct connections versus connections through the NetGuardian proxy:
+```bash
+# Run performance test comparing proxy route vs direct route
+# Target port must point to an active HTTP server instance
+python scripts/benchmark.py --proxy-port 8080 --target-host 127.0.0.1 --target-port 9000 --requests 200 --concurrency 20
 ```
 
 ---
